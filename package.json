@@ -6,7 +6,9 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
+    "querystring": "^0.2.0",
     "react-native": "^0.13.1",
-    "react-native-cli": "^0.1.5"
+    "react-native-cli": "^0.1.5",
+    "url": "^0.11.0"
   }
 }

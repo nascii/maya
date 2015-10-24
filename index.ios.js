@@ -4,50 +4,32 @@
  */
 'use strict';
 
-var React = require('react-native');
-var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;
+import React, {AppRegistry, StyleSheet, Text, View, WebView} from 'react-native';
+import { AuthWebView } from './vk';
 
-var maya = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
-    );
-  }
-});
+class maya extends React.Component {
+	
+	constructor() {
+		super()
+		this.state = {};
+	}
+
+	render() {
+		return (
+			<View>
+				<AuthWebView style={styles.container}/>
+			</View>
+		);
+	}
+}
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+	container: {
+		// flex: 1,
+		// justifyContent: 'center',
+		// alignItems: 'center',
+		backgroundColor: '#FAFAFA'
+	}
 });
 
 AppRegistry.registerComponent('maya', () => maya);
