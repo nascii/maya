@@ -8,7 +8,7 @@ import React, {AppRegistry, StyleSheet, Text, View, WebView} from 'react-native'
 import { AuthWebView } from './vk';
 
 class maya extends React.Component {
-	
+
 	constructor() {
 		super()
 		this.state = {};
@@ -29,7 +29,7 @@ var styles = StyleSheet.create({
 		// justifyContent: 'center',
 		// alignItems: 'center',
 		backgroundColor: '#FAFAFA',
-		height: 700
+		flex: 1
 	}
 });
 

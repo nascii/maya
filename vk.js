@@ -18,41 +18,82 @@ let navStates = [];
 export class User extends React.Component {
 	constructor() {
 		super()
-		this.state = {isOpened: false};
+		this.state = {isOpened: false, photos: []};
 	}
 
 	render() {
 		const user = this.props.user;
-		var webView;
-
-		if (this.state.isOpened) {
-			webView = (
-				<WebView 
-					automaticallyAdjustContentInsets={false}
-					url={`https://vk.com/id${user.id}`}
-					style={styles.webView}
-					javaScriptEnabledAndroid={true}
-					startInLoadingState={true}
-					scalesPageToFit={this.state.scalesPageToFit}
-				/>
-			);
-		}
+		const photos = this.state.photos;
 
 		return (
 			<View>
-				<TouchableWithoutFeedback onPress={e => {this._onPress(e)}}>
-					<Image source={{uri: user.photo_100}} style={styles.userPhoto} />
-				</TouchableWithoutFeedback>
-				<Text>{user.first_name}</Text>
-				{webView}
+				<View style={userStyles.container}>
+					<TouchableWithoutFeedback onPress={e => {this._onPress(e)}}>
+						<Image source={{uri: user.photo_100}} style={styles.userPhoto} />
+					</TouchableWithoutFeedback>
+					<View style={userStyles.data}>
+						<Text style={userStyles.text}>{user.first_name}</Text>
+						<Text style={userStyles.text}>{user.last_name}</Text>
+					</View>
+				</View>
+				{photos.map(photo => (<Image source={{uri: photo.photo_130}} style={styles.userPhoto} />))}
 			</View>
 		);
 	}
 
-	_onPress() {
-		this.setState({isOpened: !this.state.isOpened})
+	async _onPress() {
+		var photos = await this.getUserPhotos();
+		console.log(photos);
+
+		this.setState({
+			isOpened: !this.state.isOpened,
+			photos
+		})
+	}
+
+	async getUserPhotos() {
+		const user = this.props.user;
+
+		const urlObj = {
+			hostname: VK_API_HOSTNAME,
+			protocol: 'https',
+			pathname: 'method/photos.getAll',
+			query: {
+				owner_id: user.id,
+				access_token: token
+			}
+		}
+		const requestUrl = url.format(urlObj);
+
+		return fetch(requestUrl)
+			.then(response => response.json())
+			.then(responseJSON => Promise.resolve(responseJSON))
+			.catch(e => console.warn(e));
 	}
 }
+
+const userStyles = StyleSheet.create({
+	container: {
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		flex: 1,
+		flexDirection: 'row'
+	},
+
+	userPhoto: {
+		height: 100,
+		width: 100
+	},
+
+	data: {
+		marginLeft: 15
+	},
+
+	text: {
+		fontSize: 20
+	}
+});
+
 
 export class AuthWebView extends React.Component {
 	constructor() {
@@ -88,30 +129,28 @@ export class AuthWebView extends React.Component {
 		}
 	}
 
-	onNavigationStateChange(navigationState) {
+	async onNavigationStateChange(navigationState) {
 		const currentUrl = url.parse(navigationState.url);
 		const hash = currentUrl.hash;
 		const hasToken = hash ? hash.includes('access_token') : false;
 		const token = hasToken ? hash.split('#access_token=')[1].split('&')[0] : null;
 
 		if (token) {
-			this.getUsers({
+			let users = await this.getUsers({
 				access_token: token,
 				city: 1,
 				sex: 1,
+				offset: 100,
 				count: 40,
 				v: '5.8',
 				fields: 'photo_100'
 			})
-			.then(response => response.json())
-			.then(responseJSON => {
-				this.setState({users: responseJSON.response.items});
-			})
-			.catch(e => console.warn(e));
+
+			this.setState({users});
 		}
 	}
 
-	getUsers(params) {
+	async getUsers(params) {
 		const urlObj = {
 			hostname: VK_API_HOSTNAME,
 			protocol: 'https',
@@ -120,7 +159,10 @@ export class AuthWebView extends React.Component {
 		}
 		const requestUrl = url.format(urlObj);
 
-		return fetch(requestUrl);
+		return fetch(requestUrl)
+			.then(response => response.json())
+			.then(responseJSON => Promise.resolve(responseJSON.response.items))
+			.catch(e => console.warn(e));
 	}
 }
 
