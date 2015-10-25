@@ -16,8 +16,8 @@ class maya extends React.Component {
 
 	render() {
 		return (
-			<View>
-				<AuthWebView style={styles.container}/>
+			<View style={styles.container}>
+				<AuthWebView />
 			</View>
 		);
 	}
@@ -28,7 +28,8 @@ var styles = StyleSheet.create({
 		// flex: 1,
 		// justifyContent: 'center',
 		// alignItems: 'center',
-		backgroundColor: '#FAFAFA'
+		backgroundColor: '#FAFAFA',
+		height: 700
 	}
 });
 

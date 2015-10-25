@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { View, ScrollView, WebView, StyleSheet, Text, Image, ListView } from 'react-native';
+import React, { View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
 import url from 'url';
 import querystring from 'querystring';
 
@@ -18,15 +18,39 @@ let navStates = [];
 export class User extends React.Component {
 	constructor() {
 		super()
-		this.state = {};
+		this.state = {isOpened: false};
 	}
 
 	render() {
 		const user = this.props.user;
+		var webView;
+
+		if (this.state.isOpened) {
+			webView = (
+				<WebView 
+					automaticallyAdjustContentInsets={false}
+					url={`https://vk.com/id${user.id}`}
+					style={styles.webView}
+					javaScriptEnabledAndroid={true}
+					startInLoadingState={true}
+					scalesPageToFit={this.state.scalesPageToFit}
+				/>
+			);
+		}
 
 		return (
-			<Image source={{uri: user.photo_50}} style={styles.userPhoto}/>
+			<View>
+				<TouchableWithoutFeedback onPress={e => {this._onPress(e)}}>
+					<Image source={{uri: user.photo_100}} style={styles.userPhoto} />
+				</TouchableWithoutFeedback>
+				<Text>{user.first_name}</Text>
+				{webView}
+			</View>
 		);
+	}
+
+	_onPress() {
+		this.setState({isOpened: !this.state.isOpened})
 	}
 }
 
@@ -42,14 +66,12 @@ export class AuthWebView extends React.Component {
 
 		if (users) {
 			return (
-				<View style={styles.listViewContainer}>
-					<ListView
-						showVerticalScrollIndicator={true}
-						style={styles.usersList}
-						dataSource={this.state.usersDS.cloneWithRows(users)}
-						renderRow={ (user) => <User user={user} /> }
-					/>
-				</View>
+				<ListView
+					showVerticalScrollIndicator={true}
+					style={styles.usersList}
+					dataSource={this.state.usersDS.cloneWithRows(users)}
+					renderRow={ (user) => <User user={user} /> }
+				/>
 			);
 		} else {
 			return (
@@ -77,9 +99,9 @@ export class AuthWebView extends React.Component {
 				access_token: token,
 				city: 1,
 				sex: 1,
-				count: 35,
+				count: 40,
 				v: '5.8',
-				fields: 'photo_50'
+				fields: 'photo_100'
 			})
 			.then(response => response.json())
 			.then(responseJSON => {
@@ -106,21 +128,18 @@ export class AuthWebView extends React.Component {
 const styles = StyleSheet.create({
 	webView: {
 		backgroundColor: 'rgba(255,255,255,0.8)',
-		width: 500
+		height: 500,
+		width: 414
 	},
 
 	userPhoto: {
-		height: 50,
-		width: 50,
+		height: 100,
+		width: 100,
 		flexDirection: 'row',
 		justifyContent: 'space-around'
 	},
 
 	usersList: {
 	    flex: 1
-	},
-
-	listViewContainer: {
-		overflow: 'hidden'
 	}
 });
