@@ -5,19 +5,17 @@
 'use strict';
 
 import React, {AppRegistry, StyleSheet, Text, View, WebView} from 'react-native';
-import { AuthWebView } from './vk';
+import App from './components/App/App.js';
 
 class maya extends React.Component {
-
 	constructor() {
-		super()
-		this.state = {};
+		super();
 	}
 
 	render() {
 		return (
-			<View style={styles.container}>
-				<AuthWebView />
+			<View>
+				<App />
 			</View>
 		);
 	}

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
+import React, { AsyncStorage, View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
 import url from 'url';
 import querystring from 'querystring';
 
@@ -11,14 +11,20 @@ const VK_API_HOSTNAME = 'api.vk.com';
 // const API_TOKEN = 'gYn9y6R9Oh6I9xlD7qsM';
 
 // TODO: add url parser so we can add params via addParam methods
-const VK_AUTH_URL = `https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${APP_URL}&response_type=token&state=huy`;
+const VK_AUTH_URL = `https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${APP_URL}&response_type=token&state=huy&scope=photos`;
 
 let navStates = [];
 
 export class User extends React.Component {
 	constructor() {
 		super()
-		this.state = {isOpened: false, photos: []};
+		this.state = {
+			isOpened: false,
+			photos: [],
+			photosDS: new ListView.DataSource({
+				rowHasChanged: (r1, r2) => r1.id !== r2.id
+			})
+		};
 	}
 
 	render() {
@@ -36,7 +42,12 @@ export class User extends React.Component {
 						<Text style={userStyles.text}>{user.last_name}</Text>
 					</View>
 				</View>
-				{photos.map(photo => (<Image source={{uri: photo.photo_130}} style={styles.userPhoto} />))}
+				<ListView
+					contentContainerStyle={userStyles.contentContainerStyle}
+					showVerticalScrollIndicator={true}
+					dataSource={this.state.photosDS.cloneWithRows(photos)}
+					renderRow={photo => <Image source={{uri: photo.photo_130}} style={styles.userPhoto} />}
+				/>
 			</View>
 		);
 	}
@@ -53,6 +64,8 @@ export class User extends React.Component {
 
 	async getUserPhotos() {
 		const user = this.props.user;
+		const token = await AsyncStorage.getItem('token');
+		console.log(token);
 
 		const urlObj = {
 			hostname: VK_API_HOSTNAME,
@@ -60,14 +73,15 @@ export class User extends React.Component {
 			pathname: 'method/photos.getAll',
 			query: {
 				owner_id: user.id,
-				access_token: token
+				access_token: token,
+				v: '5.8'
 			}
 		}
 		const requestUrl = url.format(urlObj);
 
 		return fetch(requestUrl)
 			.then(response => response.json())
-			.then(responseJSON => Promise.resolve(responseJSON))
+			.then(responseJSON => Promise.resolve(responseJSON.response.items))
 			.catch(e => console.warn(e));
 	}
 }
@@ -91,6 +105,16 @@ const userStyles = StyleSheet.create({
 
 	text: {
 		fontSize: 20
+	},
+
+	photosList: {
+		flex: 1
+	},
+
+	contentContainerStyle: {
+		flex: 1,
+		width: 400,
+		flexDirection: 'row'
 	}
 });
 
@@ -98,14 +122,19 @@ const userStyles = StyleSheet.create({
 export class AuthWebView extends React.Component {
 	constructor() {
 		super()
-		this.state = { usersDS: new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id}) };
+		this.state = {
+			usersDS: new ListView.DataSource({
+				rowHasChanged: (r1, r2) => r1.id !== r2.id
+			}),
+			users: []
+		};
 	}
 
 	render() {
 		const url = VK_AUTH_URL;
 		const users = this.state.users;
 
-		if (users) {
+		if (users.length) {
 			return (
 				<ListView
 					showVerticalScrollIndicator={true}
@@ -136,6 +165,8 @@ export class AuthWebView extends React.Component {
 		const token = hasToken ? hash.split('#access_token=')[1].split('&')[0] : null;
 
 		if (token) {
+			AsyncStorage.setItem('token', token);
+
 			let users = await this.getUsers({
 				access_token: token,
 				city: 1,
