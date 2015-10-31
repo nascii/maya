@@ -4,7 +4,8 @@ import url from 'url';
 
 const CLIENT_ID = 5119199;
 const APP_NAME = 'maya';
-const APP_URL = 'http://example.com';
+const APP_URL = 'http://127.0.0.1/';
+export const APP_HOSTNAME = '127.0.0.1';
 export const VK_API_HOSTNAME = 'api.vk.com';
 const VK_AUTH_HOSTNAME = 'oauth.vk.com';
 export const SERVER_HOSTNAME = '104.238.189.178';
@@ -20,8 +21,9 @@ export const VK_AUTH_URL = url.format({
     query: {
         client_id: CLIENT_ID,
         redirect_uri: APP_URL,
-        response_type: 'token',
-        state: 'huy',
-        scope: 'photos'
+        response_type: 'code',
+        display: 'mobile',
+        scope: 'photos',
+        v: '5.37'
     }
 });

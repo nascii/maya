@@ -3,10 +3,8 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
-	webView: {
-		backgroundColor: 'rgba(255,255,255,0.8)',
-		height: 500,
-		width: 414
+	container: {
+		flex: 1
 	},
 
 	userPhoto: {
@@ -18,5 +16,17 @@ export default StyleSheet.create({
 
 	usersList: {
 	    flex: 1
-	}
+	},
+
+	centering: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    gray: {
+      backgroundColor: '#cccccc',
+    },
+    horizontal: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    }
 });
