@@ -5,23 +5,21 @@ import React, {TabBarIOS, Navigator, AsyncStorage, View, ScrollView, WebView, St
 import User from './User.js';
 import R from 'ramda';
 
-import {girls} from '../stores/stores.js';
-
-var filterLiked = R.filter(R.propEq('liked', true));
+import {subscribedUsers} from '../stores/stores.js';
 
 export default class Favorites extends React.Component {
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {console.log('rowHasChanged', (r1.id !== r2.id) || (r1.liked !== r2.liked)); return (r1.id !== r2.id) || (r1.liked !== r2.liked)}});
+        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 		this.state = {
-            users: ds.cloneWithRows(filterLiked(girls.toJSON()))
+            subscribedUsers: ds.cloneWithRows(subscribedUsers.toJSON())
 		};
     }
 
     componentDidMount() {
-        girls.on('add remove change reset', () => {
+        subscribedUsers.on('add remove change reset', () => {
             this.setState({
-                users: this.state.users.cloneWithRows(filterLiked(girls.toJSON()))
+                subscribedUsers: this.state.subscribedUsers.cloneWithRows(subscribedUsers.toJSON())
             });
         });
     }
@@ -29,10 +27,8 @@ export default class Favorites extends React.Component {
 	render() {
         return (
             <ListView
-                dataSource={this.state.users}
-                renderRow={user => {
-                    return <User key={user.id} user={user} />
-                }}
+                dataSource={this.state.subscribedUsers}
+                renderRow={user =>  <User key={user.id} user={user} />}
                 contentContainerStyle={styles.contentContainerStyle}
                 showVerticalScrollIndicator={true}
             />

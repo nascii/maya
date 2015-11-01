@@ -3,6 +3,7 @@
 import React, {TouchableOpacity, TouchableHighlight, TabBarIOS, Navigator, AsyncStorage, View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
 
 import {toggleUser} from '../actions/actions.js';
+import {subscribedUsers} from '../stores/stores.js';
 
 export default class User extends React.Component {
 	constructor(props) {
@@ -15,31 +16,34 @@ export default class User extends React.Component {
         //     this.setState({token});
         // });
         // usersStream.observe(users => this.setState({users}));
+		subscribedUsers.on('add change reset remove', () => {
+			this.setState({subscribedUsers});
+		});
     }
 
 	render() {
         var user = this.props.user;
-        var icon = user.liked ? 'dislike' : 'in-love';
-        var iconStyle = user.liked ? styles.dislike : styles.like;
+        var icon = subscribedUsers.get(user.id) ? 'dislike' : 'in-love';
+        var iconStyle = subscribedUsers.get(user.id) ? styles.dislike : styles.like;
+
         return (
             <View style={styles.container}>
                 <Image source={{uri: user.photo_100}} style={styles.userPhoto} />
                 <View style={styles.innerContainer}>
                     <View style={styles.innerInnerContainer}>
-                        <Text style={styles.text}>{user.first_name}</Text>
-                        <TouchableOpacity
-                            onPress={() => toggleUser(user.id)}
-                            >
+                        <Text style={styles.text}>{user.first_name} {user.last_name}</Text>
+                        <TouchableOpacity onPress={() => toggleUser(user.id)}>
                             <Image source={{uri: icon}} style={iconStyle} />
                         </TouchableOpacity>
                     </View>
                     <View style={
                         {
                             position: 'absolute',
-                            bottom: 0,
-                            height: 5,
-                            backgroundColor: '#cccccc',
-                            width: 20
+                            bottom: -23,
+							right: 0,
+                            height: 3,
+							backgroundColor: user.coef >= 50 ? '#2ecc71' : '#e74c3c',
+                            width: user.coef ? ((user.coef / 100) * 290) : 0
                         }
                     } />
                 </View>

@@ -16,18 +16,21 @@ class maya extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
-			code: appModel.get('code'),
-            selectedTab: 'featured'
+			token: appModel.get('token'),
+            selectedTab: 'search'
         };
     }
 
 	componentDidMount() {
-        appModel.on('change:code', () => this.setState({code: appModel.get('code')}));
+        appModel.on('change:token', () => {
+			console.log('Change token');
+			this.setState({token: appModel.get('token')})
+		});
     }
 
 	render() {
-		console.log('index', this.state.code);
-		if (this.state.code) {
+		console.log('index', this.state.token);
+		if (this.state.token) {
 			return (
 				<TabBarIOS selectedTab={this.state.selectedTab}>
 	                <TabBarIOS.Item
@@ -39,7 +42,7 @@ class maya extends React.Component {
 	                            selectedTab: 'featured'
 	                        });
 	                    }}>
-	                    <Users />
+						<Favorites />
 	                </TabBarIOS.Item>
 	                <TabBarIOS.Item
 	                    selected={this.state.selectedTab === 'search'}
@@ -50,7 +53,7 @@ class maya extends React.Component {
 	                            selectedTab: 'search'
 	                        });
 	                    }}>
-	                    <Favorites />
+						<Users />
 	                </TabBarIOS.Item>
 					<TabBarIOS.Item
 	                    selected={this.state.selectedTab === 'options'}

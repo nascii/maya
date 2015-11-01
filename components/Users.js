@@ -1,16 +1,13 @@
 'use strict';
 
 import React, {TabBarIOS, Navigator, AsyncStorage, View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
-
 import User from './User.js';
-
 import {girls} from '../stores/stores.js';
 
 export default class Users extends React.Component {
 	constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {return (r1.id !== r2.id) || (r1.liked !== r2.liked)}});
-console.log(girls.toJSON());
+        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => (r1.id !== r2.id)});
         this.state = {
             users: ds.cloneWithRows(girls.toJSON())
 		};
