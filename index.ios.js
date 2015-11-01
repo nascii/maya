@@ -22,7 +22,7 @@ class maya extends React.Component {
     }
 
 	componentDidMount() {
-        appModel.on('change:token', () => this.setState({token: appModel.get('token')}));
+        appModel.on('change:code', () => this.setState({code: appModel.get('code')}));
     }
 
 	render() {

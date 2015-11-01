@@ -10,13 +10,15 @@ export default class Users extends React.Component {
 	constructor(props) {
         super(props);
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {return (r1.id !== r2.id) || (r1.liked !== r2.liked)}});
-		this.state = {
+console.log(girls.toJSON());
+        this.state = {
             users: ds.cloneWithRows(girls.toJSON())
 		};
     }
 
     componentDidMount() {
-        girls.on('add remove change', () => {
+        girls.on('add remove change reset', () => {
+            console.log(girls.toJSON());
             this.setState({
                 users: this.state.users.cloneWithRows(girls.toJSON())
             });

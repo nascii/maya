@@ -4,7 +4,7 @@ import url from 'url';
 
 import React, {ActivityIndicatorIOS, AsyncStorage, View, ScrollView, WebView, StyleSheet, Text, Image, ListView, TouchableWithoutFeedback } from 'react-native';
 
-import {VK_AUTH_URL, APP_HOSTNAME} from '../../config.js';
+import {VK_AUTH_URL, APP_HOSTNAME, APP_URL} from '../../config.js';
 
 import {setToken} from '../../actions/actions.js';
 
@@ -38,9 +38,11 @@ export default class Auth extends React.Component {
 	}
 
 	onNavigationStateChange(navigationState) {
+		console.log(navigationState);
 		const currentUrl = url.parse(navigationState.url);
 		if (currentUrl.hostname === APP_HOSTNAME) {
 			const query = currentUrl.query;
+			console.log(query);
 			const hasCode = query ? query.includes('code') : false;
 			const code = hasCode ? query.split('code=')[1].split('&')[0] : null;
 

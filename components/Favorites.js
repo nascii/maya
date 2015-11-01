@@ -19,7 +19,7 @@ export default class Favorites extends React.Component {
     }
 
     componentDidMount() {
-        girls.on('add remove change', () => {
+        girls.on('add remove change reset', () => {
             this.setState({
                 users: this.state.users.cloneWithRows(filterLiked(girls.toJSON()))
             });

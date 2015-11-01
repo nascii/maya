@@ -25,12 +25,23 @@ export default class User extends React.Component {
             <View style={styles.container}>
                 <Image source={{uri: user.photo_100}} style={styles.userPhoto} />
                 <View style={styles.innerContainer}>
-                    <Text style={styles.text}>{user.first_name}</Text>
-                    <TouchableOpacity
-                        onPress={() => toggleUser(user.id)}
-                        >
-                        <Image source={{uri: icon}} style={iconStyle} />
-                    </TouchableOpacity>
+                    <View style={styles.innerInnerContainer}>
+                        <Text style={styles.text}>{user.first_name}</Text>
+                        <TouchableOpacity
+                            onPress={() => toggleUser(user.id)}
+                            >
+                            <Image source={{uri: icon}} style={iconStyle} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={
+                        {
+                            position: 'absolute',
+                            bottom: 0,
+                            height: 5,
+                            backgroundColor: '#cccccc',
+                            width: 20
+                        }
+                    } />
                 </View>
             </View>
 		);
@@ -39,19 +50,23 @@ export default class User extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         paddingHorizontal: 12,
-		flexDirection: 'row',
-        alignItems: 'stretch'
+		flexDirection: 'row'
 	},
 
     innerContainer: {
+        position: 'relative',
         flex: 1,
         marginLeft: 12,
         borderBottomWidth: 1,
         borderColor: '#eeeeee',
-        flexDirection: 'row',
+        flexDirection: 'column',
         paddingVertical: 6,
+        justifyContent: 'space-between'
+    },
+
+    innerInnerContainer: {
+        flexDirection: 'row',
         justifyContent: 'space-between'
     },
 
